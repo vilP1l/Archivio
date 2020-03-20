@@ -145,25 +145,11 @@ func getChannelMessages(s *discordgo.Session, channelID string, limit int, befor
         defer res.Body.Close()
         body, _ := ioutil.ReadAll(res.Body)
 
-        type Response struct {
-            Code int `json:"code"`
-        }
-
         var messages []*discordgo.Message
-        var resp Response
 
         err = json.Unmarshal([]byte(body), &messages)
         if err != nil {
             return nil, err
-        }
-
-        err = json.Unmarshal([]byte(body), &resp)
-        if err != nil {
-            return nil, err
-        }
-
-        if resp.Code == 50001 || resp.Code == 10003 {
-            return nil, errors.New("Failed to fetch messages")
         }
 
         fmt.Println(messages)
@@ -191,6 +177,8 @@ func fetchall(s *discordgo.Session, channelID string) string {
         }
 
         if err != nil {
+            fmt.Println(err)
+
             return "[]"
         }
 
